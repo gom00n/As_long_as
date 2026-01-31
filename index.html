@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>As Long As — Time Perspective</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0908;
+            --bg-cream: #f5f0e8;
+            --accent-gold: #c9a227;
+            --accent-rust: #9e4638;
+            --text-dark: #1a1a1a;
+            --text-muted: #666;
+            --border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Serif 4', Georgia, serif;
+            background: var(--bg-dark);
+            color: var(--bg-cream);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+            z-index: 1000;
+        }
+
+        header {
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo span {
+            font-style: italic;
+            color: var(--accent-gold);
+        }
+
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            margin-bottom: 4rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .period-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .period-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-rust));
+        }
+
+        .period-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .date-inputs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .date-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .date-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="date"], select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--bg-cream);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="date"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            background: rgba(201, 162, 39, 0.1);
+        }
+
+        .vs-divider {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--accent-rust);
+        }
+
+        /* Result Display */
+        .result-display {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(180deg, rgba(201, 162, 39, 0.05) 0%, transparent 100%);
+            border: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .result-display.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-number {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 700;
+            color: var(--accent-gold);
+            line-height: 1;
+        }
+
+        .result-unit {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .result-statement {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-top: 2rem;
+            line-height: 1.5;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Event Matcher Section */
+        .matcher-section {
+            margin-bottom: 4rem;
+        }
+
+        .event-selector {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        @media (max-width: 600px) {
+            .event-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .event-dropdown {
+            width: 100%;
+        }
+
+        .event-dropdown label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.85rem 2rem;
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--bg-cream);
+            transform: translateY(-2px);
+        }
+
+        /* Match Result */
+        .match-result {
+            margin-top: 3rem;
+            display: none;
+        }
+
+        .match-result.visible {
+            display: block;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .match-card {
+            background: linear-gradient(135deg, rgba(158, 70, 56, 0.1) 0%, transparent 50%);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            position: relative;
+        }
+
+        .match-card::after {
+            content: '≈';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6rem;
+            color: rgba(201, 162, 39, 0.1);
+            font-family: 'Playfair Display', serif;
+            pointer-events: none;
+        }
+
+        .match-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            line-height: 1.3;
+            margin-bottom: 2rem;
+        }
+
+        .match-headline .highlight {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .timeline-visual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .timeline-visual {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .timeline-item {
+            padding: 1.5rem;
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .timeline-item.historical {
+            border-left-color: var(--accent-rust);
+        }
+
+        .timeline-dates {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item.historical .timeline-dates {
+            color: var(--accent-rust);
+        }
+
+        .timeline-event {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .timeline-duration {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Popular Events Gallery */
+        .gallery-section {
+            margin-top: 4rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .event-card {
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-3px);
+        }
+
+        .event-card:hover::before {
+            opacity: 1;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .event-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .event-dates {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    
+    <header>
+        <h1 class="logo">As <span>Long</span> As</h1>
+        <p class="tagline">Putting time into perspective</p>
+    </header>
+
+    <main>
+        <!-- Event Matcher -->
+        <section class="matcher-section">
+            <h2 class="section-title">Find a Historical Match</h2>
+            
+            <div class="event-selector">
+                <div class="event-dropdown">
+                    <label>Select an ongoing or recent event</label>
+                    <select id="event-select">
+                        <option value="">Choose an event...</option>
+                        <optgroup label="Ongoing">
+                            <option value="ukraine-war">Russia-Ukraine War (2022–present)</option>
+                            <option value="trump-2">Trump's Second Presidency (2025–present)</option>
+                            <option value="chatgpt">ChatGPT era (2022–present)</option>
+                            <option value="iphone">Since iPhone Release (2007)</option>
+                            <option value="9-11">Since September 11 (2001)</option>
+                            <option value="ussr-fall">Since USSR Collapse (1991)</option>
+                            <option value="berlin-wall">Since Berlin Wall Fall (1989)</option>
+                        </optgroup>
+                        <optgroup label="Recent Events">
+                            <option value="trump-1">Trump's First Presidency (2017–2021)</option>
+                            <option value="covid">COVID-19 Pandemic (2020–2023)</option>
+                            <option value="covid-lockdowns">COVID Lockdowns (2020–2021)</option>
+                            <option value="brexit">Brexit Process (2016–2020)</option>
+                            <option value="obama">Obama Presidency (2009–2017)</option>
+                            <option value="biden">Biden Presidency (2021–2025)</option>
+                            <option value="afghanistan">US in Afghanistan (2001–2021)</option>
+                            <option value="iraq">Iraq War (2003–2011)</option>
+                            <option value="syrian-war">Syrian Civil War (2011–2024)</option>
+                            <option value="gwbush">George W. Bush Presidency (2001–2009)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <button class="btn" onclick="findMatch()">Find Match</button>
+            </div>
+
+            <div class="match-result" id="match-result">
+                <div class="match-card">
+                    <h3 class="match-headline" id="match-headline">
+                        The <span class="highlight" id="selected-event">Ukraine War</span> has now lasted as long as 
+                        <span class="highlight" id="matched-event">World War I</span>
+                    </h3>
+                    
+                    <div class="timeline-visual">
+                        <div class="timeline-item current">
+                            <div class="timeline-dates" id="current-dates">Feb 2022 — Jan 2025</div>
+                            <div class="timeline-event" id="current-event">Russia-Ukraine War</div>
+                            <div class="timeline-duration" id="current-duration">~1,070 days</div>
+                        </div>
+                        <div class="timeline-item historical">
+                            <div class="timeline-dates" id="historical-dates">Jul 1914 — Nov 1918</div>
+                            <div class="timeline-event" id="historical-event">World War I</div>
+                            <div class="timeline-duration" id="historical-duration">~1,560 days</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Events Gallery -->
+        <section class="gallery-section">
+            <h2 class="section-title">Quick Select Events</h2>
+            <div class="events-grid" id="events-grid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Compare Two Periods (moved to bottom) -->
+        <section class="comparison-section">
+            <h2 class="section-title">Compare Time Periods</h2>
+            
+            <div class="comparison-grid">
+                <div class="period-card">
+                    <div class="period-label">Period A</div>
+                    <div class="date-inputs">
+                        <div class="date-group">
+                            <label>From</label>
+                            <input type="date" id="periodA-start">
+                        </div>
+                        <div class="date-group">
+                            <label>To</label>
+                            <input type="date" id="periodA-end">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="vs-divider">vs</div>
+                
+                <div class="period-card">
+                    <div class="period-label">Period B</div>
+                    <div class="date-inputs">
+                        <div class="date-group">
+                            <label>From</label>
+                            <input type="date" id="periodB-start">
+                        </div>
+                        <div class="date-group">
+                            <label>To</label>
+                            <input type="date" id="periodB-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-display" id="comparison-result">
+                <div class="result-number" id="ratio-number">1.5×</div>
+                <div class="result-unit">Ratio</div>
+                <p class="result-statement" id="result-statement">
+                    Period A is <span id="comparison-text">1.5 times longer</span> than Period B
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Time is relative. Perspective is everything.</p>
+    </footer>
+
+    <script>
+        // Historical events database - 100+ events from 1900 onwards
+        const historicalEvents = [
+            // World Wars & Major Conflicts
+            { name: "World War I", start: "1914-07-28", end: "1918-11-11" },
+            { name: "World War II", start: "1939-09-01", end: "1945-09-02" },
+            { name: "World War II in Europe", start: "1939-09-01", end: "1945-05-08" },
+            { name: "World War II in the Pacific", start: "1941-12-07", end: "1945-09-02" },
+            { name: "The Korean War", start: "1950-06-25", end: "1953-07-27" },
+            { name: "The Vietnam War", start: "1955-11-01", end: "1975-04-30" },
+            { name: "US involvement in Vietnam", start: "1965-03-08", end: "1973-03-29" },
+            { name: "The Gulf War", start: "1990-08-02", end: "1991-02-28" },
+            { name: "The Bosnian War", start: "1992-04-06", end: "1995-12-14" },
+            { name: "The Kosovo War", start: "1998-02-28", end: "1999-06-11" },
+            { name: "The Falklands War", start: "1982-04-02", end: "1982-06-14" },
+            { name: "Soviet-Afghan War", start: "1979-12-24", end: "1989-02-15" },
+            { name: "The Six-Day War", start: "1967-06-05", end: "1967-06-10" },
+            { name: "Yom Kippur War", start: "1973-10-06", end: "1973-10-25" },
+            { name: "Iran-Iraq War", start: "1980-09-22", end: "1988-08-20" },
+            { name: "The Rwandan Genocide", start: "1994-04-07", end: "1994-07-15" },
+            { name: "Libyan Civil War (2011)", start: "2011-02-15", end: "2011-10-23" },
+            { name: "Yemen Civil War", start: "2014-09-16", end: "2024-01-01" },
+            
+            // US Presidents (20th-21st century)
+            { name: "Theodore Roosevelt presidency", start: "1901-09-14", end: "1909-03-04" },
+            { name: "Woodrow Wilson presidency", start: "1913-03-04", end: "1921-03-04" },
+            { name: "FDR's presidency", start: "1933-03-04", end: "1945-04-12" },
+            { name: "Truman presidency", start: "1945-04-12", end: "1953-01-20" },
+            { name: "Eisenhower presidency", start: "1953-01-20", end: "1961-01-20" },
+            { name: "JFK presidency", start: "1961-01-20", end: "1963-11-22" },
+            { name: "LBJ presidency", start: "1963-11-22", end: "1969-01-20" },
+            { name: "Nixon presidency", start: "1969-01-20", end: "1974-08-09" },
+            { name: "Carter presidency", start: "1977-01-20", end: "1981-01-20" },
+            { name: "Reagan presidency", start: "1981-01-20", end: "1989-01-20" },
+            { name: "George H.W. Bush presidency", start: "1989-01-20", end: "1993-01-20" },
+            { name: "Clinton presidency", start: "1993-01-20", end: "2001-01-20" },
+            
+            // Cold War Era
+            { name: "The Cold War", start: "1947-03-12", end: "1991-12-26" },
+            { name: "The Space Race", start: "1957-10-04", end: "1975-07-17" },
+            { name: "Cuban Missile Crisis", start: "1962-10-16", end: "1962-10-28" },
+            { name: "Berlin Wall existence", start: "1961-08-13", end: "1989-11-09" },
+            { name: "Moon landing to Glasnost", start: "1969-07-20", end: "1985-03-11" },
+            { name: "Détente period", start: "1969-01-20", end: "1979-12-24" },
+            { name: "Glasnost and Perestroika", start: "1985-03-11", end: "1991-12-26" },
+            
+            // Economic Events
+            { name: "The Great Depression", start: "1929-10-29", end: "1939-09-01" },
+            { name: "The Roaring Twenties", start: "1920-01-01", end: "1929-10-29" },
+            { name: "Post-WWII economic boom", start: "1945-09-02", end: "1973-10-17" },
+            { name: "1970s Oil Crisis era", start: "1973-10-17", end: "1979-07-15" },
+            { name: "Dot-com bubble", start: "1995-01-01", end: "2001-10-09" },
+            { name: "2008 Financial Crisis", start: "2007-12-01", end: "2009-06-01" },
+            { name: "Great Recession", start: "2007-12-01", end: "2009-06-01" },
+            { name: "COVID-19 recession", start: "2020-02-01", end: "2020-04-30" },
+            { name: "Japanese asset bubble", start: "1986-01-01", end: "1991-02-01" },
+            { name: "Asian Financial Crisis", start: "1997-07-02", end: "1998-12-31" },
+            
+            // Social Movements & Civil Rights
+            { name: "Women's Suffrage movement (US)", start: "1848-07-19", end: "1920-08-18" },
+            { name: "US Civil Rights Movement", start: "1954-05-17", end: "1968-04-11" },
+            { name: "Montgomery Bus Boycott", start: "1955-12-01", end: "1956-12-20" },
+            { name: "Anti-Apartheid movement", start: "1948-05-28", end: "1994-04-27" },
+            { name: "Indian Independence movement", start: "1915-01-09", end: "1947-08-15" },
+            { name: "The Troubles (N. Ireland)", start: "1968-10-05", end: "1998-04-10" },
+            { name: "Arab Spring", start: "2010-12-17", end: "2012-12-31" },
+            { name: "Occupy Wall Street", start: "2011-09-17", end: "2012-09-17" },
+            { name: "Black Lives Matter movement", start: "2013-07-13", end: new Date().toISOString().split('T')[0] },
+            { name: "Me Too movement", start: "2017-10-05", end: "2018-12-31" },
+            
+            // Political Events & Regimes
+            { name: "Russian Revolution to Stalin's death", start: "1917-11-07", end: "1953-03-05" },
+            { name: "Stalin's rule", start: "1924-01-21", end: "1953-03-05" },
+            { name: "Nazi Germany", start: "1933-01-30", end: "1945-05-08" },
+            { name: "The Holocaust", start: "1941-06-22", end: "1945-05-08" },
+            { name: "Mao's China", start: "1949-10-01", end: "1976-09-09" },
+            { name: "Cultural Revolution", start: "1966-05-16", end: "1976-10-06" },
+            { name: "Pinochet's Chile", start: "1973-09-11", end: "1990-03-11" },
+            { name: "Franco's Spain", start: "1939-04-01", end: "1975-11-20" },
+            { name: "Apartheid South Africa", start: "1948-05-28", end: "1994-04-27" },
+            { name: "Soviet Union existence", start: "1922-12-30", end: "1991-12-26" },
+            { name: "Watergate scandal", start: "1972-06-17", end: "1974-08-09" },
+            { name: "Iran Hostage Crisis", start: "1979-11-04", end: "1981-01-20" },
+            { name: "Brexit process", start: "2016-06-23", end: "2020-01-31" },
+            { name: "Trump's impeachment trials", start: "2019-09-24", end: "2021-02-13" },
+            
+            // Technology & Innovation
+            { name: "Personal computer revolution", start: "1977-04-16", end: "1995-08-24" },
+            { name: "Apollo program", start: "1961-05-25", end: "1972-12-19" },
+            { name: "Manhattan Project", start: "1942-08-13", end: "1946-01-01" },
+            { name: "Human Genome Project", start: "1990-10-01", end: "2003-04-14" },
+            { name: "Dot-com boom", start: "1995-08-09", end: "2000-03-10" },
+            { name: "Web 2.0 era", start: "2004-01-01", end: "2014-01-01" },
+            { name: "Early internet era", start: "1991-08-06", end: "2004-01-01" },
+            
+            // Pandemics & Health
+            { name: "Spanish Flu pandemic", start: "1918-01-01", end: "1920-04-01" },
+            { name: "HIV/AIDS crisis peak", start: "1981-06-05", end: "1996-01-01" },
+            { name: "Ebola outbreak (West Africa)", start: "2013-12-26", end: "2016-06-09" },
+            { name: "SARS outbreak", start: "2002-11-16", end: "2003-07-05" },
+            { name: "Polio epidemic (US peak)", start: "1916-06-01", end: "1955-04-12" },
+            
+            // Space Exploration
+            { name: "Sputnik to Moon landing", start: "1957-10-04", end: "1969-07-20" },
+            { name: "Apollo Moon missions", start: "1968-12-21", end: "1972-12-19" },
+            { name: "Space Shuttle program", start: "1981-04-12", end: "2011-07-21" },
+            { name: "ISS continuous occupation", start: "2000-11-02", end: new Date().toISOString().split('T')[0] },
+            { name: "Mars rover Curiosity mission", start: "2012-08-06", end: new Date().toISOString().split('T')[0] },
+            { name: "Hubble Space Telescope", start: "1990-04-24", end: new Date().toISOString().split('T')[0] },
+            { name: "SpaceX founding to first crewed flight", start: "2002-03-14", end: "2020-05-30" },
+            
+            // Cultural Phenomena
+            { name: "Beatlemania", start: "1963-10-13", end: "1970-04-10" },
+            { name: "The Beatles active years", start: "1960-08-17", end: "1970-04-10" },
+            { name: "Prohibition (US)", start: "1920-01-17", end: "1933-12-05" },
+            { name: "Hollywood Golden Age", start: "1927-10-06", end: "1969-01-01" },
+            { name: "MTV era", start: "1981-08-01", end: "2000-01-01" },
+            { name: "Grunge era", start: "1988-01-01", end: "1997-01-01" },
+            { name: "Harry Potter book releases", start: "1997-06-26", end: "2007-07-21" },
+            { name: "Game of Thrones TV run", start: "2011-04-17", end: "2019-05-19" },
+            { name: "Marvel Cinematic Universe", start: "2008-05-02", end: new Date().toISOString().split('T')[0] },
+            { name: "Star Wars original trilogy", start: "1977-05-25", end: "1983-05-25" },
+            { name: "The Simpsons run", start: "1989-12-17", end: new Date().toISOString().split('T')[0] },
+            
+            // Sports
+            { name: "Michael Jordan's NBA career", start: "1984-10-26", end: "2003-04-16" },
+            { name: "Tiger Woods dominance", start: "1997-04-13", end: "2008-06-16" },
+            { name: "Usain Bolt's career", start: "2004-01-01", end: "2017-08-12" },
+            { name: "Tom Brady's NFL career", start: "2000-04-16", end: "2023-02-01" },
+            { name: "LeBron James NBA career", start: "2003-10-29", end: new Date().toISOString().split('T')[0] },
+            { name: "Messi at Barcelona", start: "2004-10-16", end: "2021-08-10" },
+            { name: "FIFA World Cup (1930-present)", start: "1930-07-13", end: new Date().toISOString().split('T')[0] },
+            
+            // Natural Disasters & Events
+            { name: "Chernobyl exclusion zone", start: "1986-04-26", end: new Date().toISOString().split('T')[0] },
+            { name: "Fukushima disaster aftermath", start: "2011-03-11", end: new Date().toISOString().split('T')[0] },
+            { name: "Deepwater Horizon oil spill", start: "2010-04-20", end: "2010-09-19" },
+            { name: "Hurricane Katrina aftermath", start: "2005-08-29", end: "2006-08-29" },
+            
+            // European History
+            { name: "European Union existence", start: "1993-11-01", end: new Date().toISOString().split('T')[0] },
+            { name: "Eurozone existence", start: "1999-01-01", end: new Date().toISOString().split('T')[0] },
+            { name: "German reunification process", start: "1989-11-09", end: "1990-10-03" },
+            { name: "Yugoslav Wars", start: "1991-06-27", end: "2001-08-13" },
+            { name: "Greek debt crisis", start: "2009-10-18", end: "2018-08-20" },
+            { name: "Weimar Republic", start: "1918-11-09", end: "1933-01-30" },
+            { name: "UK in EU membership", start: "1973-01-01", end: "2020-01-31" },
+            { name: "Thatcher era", start: "1979-05-04", end: "1990-11-28" },
+            { name: "Blair era", start: "1997-05-02", end: "2007-06-27" },
+            
+            // Middle East
+            { name: "Israel's existence", start: "1948-05-14", end: new Date().toISOString().split('T')[0] },
+            { name: "First Intifada", start: "1987-12-09", end: "1993-09-13" },
+            { name: "Second Intifada", start: "2000-09-28", end: "2005-02-08" },
+            { name: "Oslo Peace Process", start: "1993-09-13", end: "2000-09-28" },
+            { name: "Iranian Revolution", start: "1978-01-07", end: "1979-04-01" },
+            { name: "Saddam Hussein's Iraq", start: "1979-07-16", end: "2003-04-09" },
+            { name: "Arab-Israeli conflict", start: "1948-05-15", end: new Date().toISOString().split('T')[0] },
+            
+            // Asia
+            { name: "Chinese Economic Reform era", start: "1978-12-18", end: new Date().toISOString().split('T')[0] },
+            { name: "Hong Kong British rule", start: "1841-01-26", end: "1997-07-01" },
+            { name: "Japan's Lost Decade", start: "1991-03-01", end: "2001-03-01" },
+            { name: "Korean DMZ existence", start: "1953-07-27", end: new Date().toISOString().split('T')[0] },
+            { name: "Singapore independence", start: "1965-08-09", end: new Date().toISOString().split('T')[0] },
+            { name: "Khmer Rouge Cambodia", start: "1975-04-17", end: "1979-01-07" },
+            { name: "Myanmar military rule", start: "1962-03-02", end: "2011-03-30" },
+            { name: "Xi Jinping era", start: "2012-11-15", end: new Date().toISOString().split('T')[0] },
+            
+            // Latin America
+            { name: "Castro's Cuba", start: "1959-01-01", end: "2008-02-24" },
+            { name: "Chavez's Venezuela", start: "1999-02-02", end: "2013-03-05" },
+            { name: "Argentine Dirty War", start: "1976-03-24", end: "1983-12-10" },
+            { name: "Mexican Drug War", start: "2006-12-11", end: new Date().toISOString().split('T')[0] },
+            { name: "Brazilian military dictatorship", start: "1964-04-01", end: "1985-03-15" },
+            { name: "Lula's presidencies", start: "2003-01-01", end: "2010-12-31" },
+        ];
+
+        // Current/recent events for the matcher
+        const currentEvents = {
+            "ukraine-war": { 
+                name: "Russia-Ukraine War", 
+                start: "2022-02-24", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "trump-1": { 
+                name: "Trump's First Presidency", 
+                start: "2017-01-20", 
+                end: "2021-01-20",
+                ongoing: false 
+            },
+            "trump-2": { 
+                name: "Trump's Second Presidency", 
+                start: "2025-01-20", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "covid": { 
+                name: "COVID-19 Pandemic", 
+                start: "2020-01-30", 
+                end: "2023-05-05",
+                ongoing: false 
+            },
+            "covid-lockdowns": { 
+                name: "COVID-19 Lockdowns", 
+                start: "2020-03-11", 
+                end: "2021-06-01",
+                ongoing: false 
+            },
+            "chatgpt": { 
+                name: "ChatGPT era", 
+                start: "2022-11-30", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "iphone": { 
+                name: "Time since iPhone release", 
+                start: "2007-06-29", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "9-11": { 
+                name: "Time since 9/11", 
+                start: "2001-09-11", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "ussr-fall": { 
+                name: "Time since USSR collapse", 
+                start: "1991-12-26", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "berlin-wall": { 
+                name: "Time since Berlin Wall fell", 
+                start: "1989-11-09", 
+                end: new Date().toISOString().split('T')[0],
+                ongoing: true 
+            },
+            "brexit": { 
+                name: "Brexit process", 
+                start: "2016-06-23", 
+                end: "2020-01-31",
+                ongoing: false 
+            },
+            "obama": { 
+                name: "Obama Presidency", 
+                start: "2009-01-20", 
+                end: "2017-01-20",
+                ongoing: false 
+            },
+            "biden": { 
+                name: "Biden Presidency", 
+                start: "2021-01-20", 
+                end: "2025-01-20",
+                ongoing: false 
+            },
+            "gwbush": { 
+                name: "George W. Bush Presidency", 
+                start: "2001-01-20", 
+                end: "2009-01-20",
+                ongoing: false 
+            },
+            "afghanistan": { 
+                name: "US War in Afghanistan", 
+                start: "2001-10-07", 
+                end: "2021-08-30",
+                ongoing: false 
+            },
+            "iraq": { 
+                name: "Iraq War", 
+                start: "2003-03-20", 
+                end: "2011-12-18",
+                ongoing: false 
+            },
+            "syrian-war": { 
+                name: "Syrian Civil War", 
+                start: "2011-03-15", 
+                end: "2024-12-08",
+                ongoing: false 
+            }
+        };
+
+        // Calculate days between two dates
+        function daysBetween(date1, date2) {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            return Math.abs(Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)));
+        }
+
+        // Format date for display
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }
+
+        // Format duration
+        function formatDuration(days) {
+            if (days < 30) return `${days} days`;
+            if (days < 365) return `~${Math.round(days / 30)} months`;
+            const years = days / 365;
+            if (years < 2) return `~${Math.round(days / 30)} months`;
+            return `~${years.toFixed(1)} years`;
+        }
+
+        // Find closest matching historical event (excluding the selected event itself)
+        function findClosestMatch(targetDays, excludeName) {
+            let closest = null;
+            let closestDiff = Infinity;
+
+            historicalEvents.forEach(event => {
+                // Skip if this event name is similar to the one we're matching
+                if (excludeName && (
+                    event.name.toLowerCase().includes(excludeName.toLowerCase()) ||
+                    excludeName.toLowerCase().includes(event.name.toLowerCase())
+                )) {
+                    return;
+                }
+                
+                const eventDays = daysBetween(event.start, event.end);
+                const diff = Math.abs(eventDays - targetDays);
+                if (diff < closestDiff) {
+                    closestDiff = diff;
+                    closest = { ...event, days: eventDays };
+                }
+            });
+
+            return closest;
+        }
+
+        // Compare periods
+        function comparePeriods() {
+            const aStart = document.getElementById('periodA-start').value;
+            const aEnd = document.getElementById('periodA-end').value;
+            const bStart = document.getElementById('periodB-start').value;
+            const bEnd = document.getElementById('periodB-end').value;
+
+            if (!aStart || !aEnd || !bStart || !bEnd) return;
+
+            const daysA = daysBetween(aStart, aEnd);
+            const daysB = daysBetween(bStart, bEnd);
+
+            if (daysB === 0) return;
+
+            const ratio = daysA / daysB;
+            const resultDiv = document.getElementById('comparison-result');
+            
+            document.getElementById('ratio-number').textContent = ratio.toFixed(2) + '×';
+            
+            let compText;
+            if (ratio > 1) {
+                compText = `Period A is ${ratio.toFixed(2)} times longer than Period B (${formatDuration(daysA)} vs ${formatDuration(daysB)})`;
+            } else if (ratio < 1) {
+                compText = `Period A is ${(1/ratio).toFixed(2)} times shorter than Period B (${formatDuration(daysA)} vs ${formatDuration(daysB)})`;
+            } else {
+                compText = `Both periods are equal in length (${formatDuration(daysA)})`;
+            }
+            
+            document.getElementById('comparison-text').textContent = compText;
+            resultDiv.classList.add('visible');
+        }
+
+        // Find historical match
+        function findMatch() {
+            const select = document.getElementById('event-select');
+            const eventKey = select.value;
+            
+            if (!eventKey) return;
+
+            const event = currentEvents[eventKey];
+            const eventDays = daysBetween(event.start, event.end);
+            const match = findClosestMatch(eventDays, event.name);
+
+            // Update display
+            document.getElementById('selected-event').textContent = event.name;
+            document.getElementById('matched-event').textContent = match.name;
+            
+            document.getElementById('current-dates').textContent = 
+                `${formatDate(event.start)} — ${event.ongoing ? 'Present' : formatDate(event.end)}`;
+            document.getElementById('current-event').textContent = event.name;
+            document.getElementById('current-duration').textContent = `~${eventDays.toLocaleString()} days`;
+
+            document.getElementById('historical-dates').textContent = 
+                `${formatDate(match.start)} — ${formatDate(match.end)}`;
+            document.getElementById('historical-event').textContent = match.name;
+            document.getElementById('historical-duration').textContent = `~${match.days.toLocaleString()} days`;
+
+            document.getElementById('match-result').classList.add('visible');
+        }
+
+        // Populate events gallery
+        function populateGallery() {
+            const grid = document.getElementById('events-grid');
+            const displayEvents = [
+                { name: "Moon Landing to Glasnost", start: "1969-07-20", end: "1985-03-11" },
+                { name: "World War II", start: "1939-09-01", end: "1945-09-02" },
+                { name: "The Space Race", start: "1957-10-04", end: "1975-07-17" },
+                { name: "The Cold War", start: "1947-03-12", end: "1991-12-26" },
+                { name: "The Roaring Twenties", start: "1920-01-01", end: "1929-10-29" },
+                { name: "The Vietnam War", start: "1955-11-01", end: "1975-04-30" },
+                { name: "Reagan Presidency", start: "1981-01-20", end: "1989-01-20" },
+                { name: "Apollo Program", start: "1961-05-25", end: "1972-12-19" },
+                { name: "The Great Depression", start: "1929-10-29", end: "1939-09-01" },
+                { name: "Berlin Wall existence", start: "1961-08-13", end: "1989-11-09" },
+                { name: "Spanish Flu pandemic", start: "1918-01-01", end: "1920-04-01" },
+                { name: "World War I", start: "1914-07-28", end: "1918-11-11" },
+            ];
+
+            displayEvents.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.innerHTML = `
+                    <div class="event-name">${event.name}</div>
+                    <div class="event-dates">${formatDate(event.start)} — ${formatDate(event.end)} · ${formatDuration(daysBetween(event.start, event.end))}</div>
+                `;
+                card.onclick = () => {
+                    document.getElementById('periodA-start').value = event.start;
+                    document.getElementById('periodA-end').value = event.end;
+                    comparePeriods();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('periodA-start').addEventListener('change', comparePeriods);
+        document.getElementById('periodA-end').addEventListener('change', comparePeriods);
+        document.getElementById('periodB-start').addEventListener('change', comparePeriods);
+        document.getElementById('periodB-end').addEventListener('change', comparePeriods);
+
+        // Set some default values for demonstration
+        window.onload = () => {
+            populateGallery();
+            
+            // Default: iPhone release to now vs Moon landing to Glasnost
+            document.getElementById('periodA-start').value = '2007-06-29';
+            document.getElementById('periodA-end').value = new Date().toISOString().split('T')[0];
+            document.getElementById('periodB-start').value = '1969-07-20';
+            document.getElementById('periodB-end').value = '1985-03-11';
+            
+            comparePeriods();
+        };
+    </script>
+</body>
+</html>
