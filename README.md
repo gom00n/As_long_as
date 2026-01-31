@@ -6,7 +6,7 @@ A web tool that helps you understand the duration of historical and current even
 
 🔗 **Live Demo:** [gom00n.github.io/as-long-as](https://gom00n.github.io/as-long-as/)
 
-![Screenshot](screenshot.png)
+
 
 ## Features
 
