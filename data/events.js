@@ -22,7 +22,7 @@ const historicalEvents = [
     // -------------------------------------------------------------------------
     // World Wars & Major Conflicts
     // -------------------------------------------------------------------------
-    { name: "World War I", start: "1714-07-28", end: "1918-11-11" },
+    { name: "World War I", start: "1914-07-28", end: "1918-11-11" },
     { name: "World War II", start: "1939-09-01", end: "1945-09-02" },
     { name: "World War II in Europe", start: "1939-09-01", end: "1945-05-08" },
     { name: "World War II in the Pacific", start: "1941-12-07", end: "1945-09-02" },
