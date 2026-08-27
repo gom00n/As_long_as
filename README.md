@@ -4,7 +4,7 @@
 
 A web tool that helps you understand the duration of historical and current events by comparing them to each other. Ever wondered how the Ukraine War compares to World War I? Or how long the iPhone has been around compared to the Space Race?
 
-🔗 **Live Demo:** [gom00n.github.io/as-long-as](https://gom00n.github.io/as-long-as/)
+🔗 **Live Demo:** [gom00n.github.io/As_long_as](https://gom00n.github.io/As_long_as/)
 
 
 
